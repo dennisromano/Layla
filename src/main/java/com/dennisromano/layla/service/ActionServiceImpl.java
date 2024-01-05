@@ -1,11 +1,13 @@
 package com.dennisromano.layla.service;
 
+import com.dennisromano.layla.component.PdfMenuPanel;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -14,21 +16,21 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AzioniServiceImpl implements AzioniService {
+public class ActionServiceImpl implements ActionService {
 
     /*
      *
      * Singleton Design Pattern for initialization
      *
      */
-    private static AzioniServiceImpl instance;
+    private static ActionServiceImpl instance;
 
-    private AzioniServiceImpl() {
+    private ActionServiceImpl() {
     }
 
-    public static AzioniServiceImpl getInstance() {
+    public static ActionServiceImpl getInstance() {
         if (instance == null) {
-            instance = new AzioniServiceImpl();
+            instance = new ActionServiceImpl();
         }
         return instance;
     }
@@ -64,7 +66,7 @@ public class AzioniServiceImpl implements AzioniService {
     public JLabel generetePdfPage() {
         try {
             final PDFRenderer pdfRenderer = new PDFRenderer(document);
-            final Image pageImage = pdfRenderer.renderImage(currentPage);
+            final Image pageImage = pdfRenderer.renderImage(currentPage, 0.75f);
             final ImageIcon icon = new ImageIcon(pageImage);
 
             return new JLabel(icon);
@@ -102,9 +104,6 @@ public class AzioniServiceImpl implements AzioniService {
     @Override
     public void removeBlankPage() {
         try {
-            System.out.println("Inizio eliminazione pagine bianche");
-            long start = System.currentTimeMillis();
-
             List<Integer> blankPages = new ArrayList<>();
 
             for (int pageIndex = 1; pageIndex < document.getNumberOfPages(); pageIndex++) {
@@ -115,13 +114,11 @@ public class AzioniServiceImpl implements AzioniService {
 
                 if (pageText.trim().isEmpty()) {
                     blankPages.add(pageIndex);
-                    System.out.println("Pagina bianca " + (pageIndex) + " di " + document.getNumberOfPages());
                 }
             }
 
             for(int i=0; i < blankPages.size(); i++) {
                 int value = blankPages.get(i) - i - 1;
-                System.out.println("Rimuovo bianca " + value + " di " + document.getNumberOfPages());
                 document.removePage(value);
             }
 
@@ -138,11 +135,6 @@ public class AzioniServiceImpl implements AzioniService {
             document = Loader.loadPDF(new File(lastPdfAutoSave));
             totalPage = getTotalPage();
             currentPage = 0;
-
-            long end = System.currentTimeMillis();
-            double diff = (end - start) / 1000D;
-            System.out.println("-------------------------------");
-            System.out.println(diff + "s - Fine eliminazione pagine bianche");
         } catch (Exception e) {
             throw new RuntimeException("Errore nel salvataggio del nuovo file, dopo eliminazione delle pagine bianche!\n" + e.getMessage());
         }
@@ -155,11 +147,41 @@ public class AzioniServiceImpl implements AzioniService {
     }
 
     @Override
-    public void startOperation(String filePath) throws IOException {
+    public void openFileChooser(JPanel parentComponent) {
+        final FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files", "pdf");
+
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(pdfFilter);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        final int result = fileChooser.showOpenDialog(parentComponent);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                final String selectedFilePath = fileChooser.getSelectedFile().getAbsolutePath();
+                final JLabel pdfPage = startOperation(selectedFilePath);
+
+                final PdfMenuPanel pdfMenuPanel = new PdfMenuPanel(parentComponent);
+
+                parentComponent.removeAll();
+                parentComponent.add(pdfPage, BorderLayout.CENTER);
+                parentComponent.add(pdfMenuPanel, BorderLayout.SOUTH);
+                parentComponent.revalidate();
+                parentComponent.repaint();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
+            System.out.println("File selection canceled.");
+        }
+    }
+
+    private JLabel startOperation(String filePath) throws IOException {
         PDF_PATH = filePath;
-        document = loadDocument(filePath);
+        document = loadDocument(PDF_PATH);
         totalPage = getTotalPage();
         pdfAutoSaveList.add(PDF_PATH);
+        return generetePdfPage();
     }
 
     @Override

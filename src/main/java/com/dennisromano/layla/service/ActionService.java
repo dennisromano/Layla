@@ -5,8 +5,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import javax.swing.*;
 import java.io.IOException;
 
-public interface AzioniService {
-    void startOperation(String filePath) throws IOException;
+public interface ActionService {
+    void openFileChooser(JPanel parentComponent);
 
     PDDocument loadDocument(String filePath) throws IOException;
 

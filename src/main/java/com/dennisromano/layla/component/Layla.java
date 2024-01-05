@@ -1,24 +1,22 @@
 package com.dennisromano.layla.component;
 
-import com.dennisromano.layla.service.AzioniService;
-import com.dennisromano.layla.service.AzioniServiceImpl;
+import com.dennisromano.layla.service.ActionService;
+import com.dennisromano.layla.service.ActionServiceImpl;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class Layla extends JFrame {
-    private final AzioniService azioniService = AzioniServiceImpl.getInstance();
+    private final ActionService actionService = ActionServiceImpl.getInstance();
 
-    public Layla(String filePath) {
+    public Layla() {
         try {
-            azioniService.startOperation(filePath);
-
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    azioniService.closeOperation();
+                    actionService.closeOperation();
                 }
             });
 

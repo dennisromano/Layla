@@ -1,19 +1,18 @@
 package com.dennisromano.layla.component;
 
-import com.dennisromano.layla.service.AzioniService;
-import com.dennisromano.layla.service.AzioniServiceImpl;
-
 import javax.swing.*;
 import java.awt.*;
 
+import static com.dennisromano.layla.util.Style.PLAIN_FONT;
+
 public class PdfPanel extends JPanel {
-    private final AzioniService azioniService = AzioniServiceImpl.getInstance();
 
     public PdfPanel() {
-        final JLabel pdfPage = azioniService.generetePdfPage();
+        final JLabel chooseFile = new JLabel("Scegli il tuo file PDF!", SwingConstants.CENTER);
+        chooseFile.setFont(PLAIN_FONT);
 
         setLayout(new BorderLayout());
         setBackground(new Color(250,250,250));
-        add(pdfPage, BorderLayout.CENTER);
+        add(chooseFile, BorderLayout.CENTER);
     }
 }
