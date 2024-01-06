@@ -1,12 +1,14 @@
 package com.dennisromano.layla.service;
 
+import com.dennisromano.layla.component.PdfPanel;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import javax.swing.*;
 import java.io.IOException;
 
-public interface AzioniService {
-    void startOperation(String filePath) throws IOException;
+public interface ActionService {
+    PdfPanel getPdfPanel();
+    void openFileChooser();
 
     PDDocument loadDocument(String filePath) throws IOException;
 
@@ -27,4 +29,6 @@ public interface AzioniService {
     int goToSpecificPage(String textFieldValue);
 
     JLabel generetePdfPage();
+
+    void changePage();
 }
