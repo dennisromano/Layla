@@ -55,7 +55,7 @@ public class Style {
         return button;
     }
 
-    public static JTextField customTextField(String pageNumber) {
+    public static JTextField customTextField(int pageNumber) {
         Border lineBorder = BorderFactory.createLineBorder(new Color(204, 204, 204), 1);
         Border emptyBorder = new EmptyBorder(8, 8, 8, 8);
         Border border = BorderFactory.createCompoundBorder(lineBorder, emptyBorder);
@@ -63,10 +63,20 @@ public class Style {
         final JTextField textField = new JTextField(8);
         textField.setForeground(new Color(56, 58, 66));
         textField.setBorder(border);
-        textField.setText(pageNumber);
+        textField.setText(String.valueOf(pageNumber));
         textField.setFont(PLAIN_FONT);
         textField.setHorizontalAlignment(SwingConstants.CENTER);
 
         return textField;
+    }
+
+    public static JLabel logo() {
+        final Border border = new EmptyBorder(10, 0, 16, 0);
+        final JLabel logo = new JLabel("Layla", SwingConstants.CENTER);
+        logo.setForeground(new Color(228, 192, 122));
+        logo.setFont(BOLD_FONT);
+        logo.setBorder(border);
+
+        return logo;
     }
 }

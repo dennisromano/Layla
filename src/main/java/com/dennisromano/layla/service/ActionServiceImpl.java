@@ -1,6 +1,7 @@
 package com.dennisromano.layla.service;
 
 import com.dennisromano.layla.component.PdfMenuPanel;
+import com.dennisromano.layla.component.PdfPanel;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -49,6 +50,16 @@ public class ActionServiceImpl implements ActionService {
     private PDDocument document;
 
     private String PDF_PATH = "";
+
+
+    private final PdfPanel pdfPanel = new PdfPanel();
+
+    @Override
+    public PdfPanel getPdfPanel() {
+        return pdfPanel;
+    }
+
+
 
 
     /*
@@ -147,27 +158,27 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public void openFileChooser(JPanel parentComponent) {
+    public void openFileChooser() {
         final FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files", "pdf");
 
         final JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(pdfFilter);
         fileChooser.setAcceptAllFileFilterUsed(false);
 
-        final int result = fileChooser.showOpenDialog(parentComponent);
+        final int result = fileChooser.showOpenDialog(pdfPanel);
 
         if (result == JFileChooser.APPROVE_OPTION) {
             try {
                 final String selectedFilePath = fileChooser.getSelectedFile().getAbsolutePath();
                 final JLabel pdfPage = startOperation(selectedFilePath);
 
-                final PdfMenuPanel pdfMenuPanel = new PdfMenuPanel(parentComponent);
+                final PdfMenuPanel pdfMenuPanel = new PdfMenuPanel();
 
-                parentComponent.removeAll();
-                parentComponent.add(pdfPage, BorderLayout.CENTER);
-                parentComponent.add(pdfMenuPanel, BorderLayout.SOUTH);
-                parentComponent.revalidate();
-                parentComponent.repaint();
+                pdfPanel.removeAll();
+                pdfPanel.add(pdfPage, BorderLayout.CENTER);
+                pdfPanel.add(pdfMenuPanel, BorderLayout.SOUTH);
+                pdfPanel.revalidate();
+                pdfPanel.repaint();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -235,5 +246,18 @@ public class ActionServiceImpl implements ActionService {
         }
 
         return currentPage;
+    }
+
+    @Override
+    public void changePage() {
+        final JLabel pdfPage = generetePdfPage();
+        final PdfMenuPanel pdfMenuPanel = new PdfMenuPanel();
+
+        pdfPanel.removeAll();
+        pdfPanel.add(pdfPage, BorderLayout.CENTER);
+        pdfPanel.add(pdfMenuPanel, BorderLayout.SOUTH);
+
+        pdfPanel.revalidate();
+        pdfPanel.repaint();
     }
 }

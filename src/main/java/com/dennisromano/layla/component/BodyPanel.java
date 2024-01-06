@@ -1,16 +1,19 @@
 package com.dennisromano.layla.component;
 
+import com.dennisromano.layla.service.ActionService;
+import com.dennisromano.layla.service.ActionServiceImpl;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class BodyPanel extends JPanel {
+    private final ActionService actionService = ActionServiceImpl.getInstance();
 
     public BodyPanel() {
-        final PdfPanel pdfPanel = new PdfPanel();
-        final MenuPanel menu = new MenuPanel(pdfPanel);
+        final MenuPanel menu = new MenuPanel();
 
         setLayout(new BorderLayout());
-        add(pdfPanel, BorderLayout.CENTER);
+        add(actionService.getPdfPanel(), BorderLayout.CENTER);
         add(menu, BorderLayout.WEST);
     }
 }

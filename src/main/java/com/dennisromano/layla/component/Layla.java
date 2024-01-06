@@ -20,13 +20,13 @@ public class Layla extends JFrame {
                 }
             });
 
-            final JPanel mainPanel = new BodyPanel();
+            final BodyPanel bodyPanel = new BodyPanel();
 
             setTitle("Layla - A minimal PDF editor");
             setSize(700, 900);
             setLocationRelativeTo(null);
             setVisible(true);
-            add(mainPanel);
+            add(bodyPanel);
         } catch (Exception e) {
             throw new RuntimeException("Errore in Layla!\n" + e.getMessage());
         }
