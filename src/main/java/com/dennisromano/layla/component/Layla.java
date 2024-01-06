@@ -22,7 +22,7 @@ public class Layla extends JFrame {
 
             final BodyPanel bodyPanel = new BodyPanel();
 
-            setTitle("Layla - A minimal PDF editor");
+            setTitle("Layla - An Open Source PDF Editor");
             setSize(700, 900);
             setLocationRelativeTo(null);
             setVisible(true);
