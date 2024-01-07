@@ -42,7 +42,7 @@ public class ActionServiceImpl implements ActionService {
      * Implementation variabiles
      *
      */
-    private int currentPage = 0;
+    private int currentPage = 1;
 
     private int totalPage = 0;
     private final List<String> pdfAutoSaveList = new ArrayList<>();
@@ -77,7 +77,7 @@ public class ActionServiceImpl implements ActionService {
     public JLabel generetePdfPage() {
         try {
             final PDFRenderer pdfRenderer = new PDFRenderer(document);
-            final Image pageImage = pdfRenderer.renderImage(currentPage, 0.75f);
+            final Image pageImage = pdfRenderer.renderImage(currentPage - 1, 0.75f);
             final ImageIcon icon = new ImageIcon(pageImage);
 
             return new JLabel(icon);
@@ -89,8 +89,8 @@ public class ActionServiceImpl implements ActionService {
     @Override
     public void removePage() {
         try {
-            if (currentPage >= 0 && currentPage <= totalPage) {
-                document.removePage(currentPage);
+            if (currentPage >= 1 && currentPage <= totalPage) {
+                document.removePage(currentPage - 1);
 
                 String lastPdfAutoSave = PDF_PATH
                         .replace(".pdf", "")
@@ -103,7 +103,7 @@ public class ActionServiceImpl implements ActionService {
                 document = Loader.loadPDF(new File(lastPdfAutoSave));
                 totalPage = getTotalPage();
 
-                if(currentPage > 0) {
+                if(currentPage > 1) {
                     currentPage--;
                 }
             }
@@ -145,7 +145,7 @@ public class ActionServiceImpl implements ActionService {
 
             document = Loader.loadPDF(new File(lastPdfAutoSave));
             totalPage = getTotalPage();
-            currentPage = 0;
+            currentPage = 1;
         } catch (Exception e) {
             throw new RuntimeException("Errore nel salvataggio del nuovo file, dopo eliminazione delle pagine bianche!\n" + e.getMessage());
         }
@@ -218,7 +218,7 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public int goToNextPage() {
-        if (currentPage >= 0 && currentPage < totalPage) {
+        if (currentPage >= 1 && currentPage < totalPage) {
             return currentPage++;
         }
 
@@ -241,7 +241,7 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public int goToPreviousPage() {
-        if (currentPage > 0 && currentPage <= totalPage) {
+        if (currentPage > 1 && currentPage <= totalPage) {
             return currentPage--;
         }
 
