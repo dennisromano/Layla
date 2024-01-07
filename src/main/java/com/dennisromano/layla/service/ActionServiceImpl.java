@@ -44,7 +44,8 @@ public class ActionServiceImpl implements ActionService {
      */
     private int currentPage = 1;
 
-    private int totalPage = 0;
+    private int totalPage = 1;
+
     private final List<String> pdfAutoSaveList = new ArrayList<>();
 
     private PDDocument document;
@@ -89,7 +90,7 @@ public class ActionServiceImpl implements ActionService {
     @Override
     public void removePage() {
         try {
-            if (currentPage >= 1 && currentPage <= totalPage) {
+            if (totalPage > 1 && currentPage >= 1 && currentPage <= totalPage) {
                 document.removePage(currentPage - 1);
 
                 String lastPdfAutoSave = PDF_PATH
@@ -101,10 +102,10 @@ public class ActionServiceImpl implements ActionService {
                 pdfAutoSaveList.add(lastPdfAutoSave);
 
                 document = Loader.loadPDF(new File(lastPdfAutoSave));
-                totalPage = getTotalPage();
 
                 if(currentPage > 1) {
                     currentPage--;
+                    totalPage = getTotalPage();
                 }
             }
         } catch (Exception e) {
@@ -117,7 +118,7 @@ public class ActionServiceImpl implements ActionService {
         try {
             List<Integer> blankPages = new ArrayList<>();
 
-            for (int pageIndex = 1; pageIndex < document.getNumberOfPages(); pageIndex++) {
+            for (int pageIndex = 1; pageIndex <= totalPage; pageIndex++) {
                 PDFTextStripper pdfStripper = new PDFTextStripper();
                 pdfStripper.setStartPage(pageIndex);
                 pdfStripper.setEndPage(pageIndex);
@@ -132,8 +133,6 @@ public class ActionServiceImpl implements ActionService {
                 int value = blankPages.get(i) - i - 1;
                 document.removePage(value);
             }
-
-            blankPages.forEach(blankPage -> document.removePage(blankPage));
 
             String lastPdfAutoSave = PDF_PATH
                     .replace(".pdf", "")
@@ -230,7 +229,7 @@ public class ActionServiceImpl implements ActionService {
         if (!textFieldValue.isEmpty() && textFieldValue.matches("^\\d+$")) {
             final int textFieldValueAsInt = Integer.parseInt(textFieldValue);
 
-            if (textFieldValueAsInt >= 0 && textFieldValueAsInt <= totalPage) {
+            if (textFieldValueAsInt > 0 && textFieldValueAsInt <= totalPage) {
                 currentPage = textFieldValueAsInt;
                 return currentPage;
             }

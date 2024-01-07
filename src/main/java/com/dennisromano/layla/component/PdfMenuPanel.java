@@ -12,9 +12,9 @@ public class PdfMenuPanel extends JPanel {
     private final ActionService actionService = ActionServiceImpl.getInstance();
 
     public PdfMenuPanel() {
-        final JButton deleteButton = menuButton("\uD83D\uDDD1");
-        deleteButton.addActionListener(e -> {
-            actionService.removePage();
+        final JButton prevButton = menuButton("◀");
+        prevButton.addActionListener(e -> {
+            actionService.goToPreviousPage();
             actionService.changePage();
         });
 
@@ -24,11 +24,8 @@ public class PdfMenuPanel extends JPanel {
             actionService.changePage();
         });
 
-        final JButton prevButton = menuButton("◀");
-        prevButton.addActionListener(e -> {
-            actionService.goToPreviousPage();
-            actionService.changePage();
-        });
+        final JLabel totalPageLabel = new JLabel("/" + actionService.getTotalPage());
+        totalPageLabel.setFont(PLAIN_FONT);
 
         final JButton nextButton = menuButton("▶");
         nextButton.addActionListener(e -> {
@@ -36,10 +33,17 @@ public class PdfMenuPanel extends JPanel {
             actionService.changePage();
         });
 
+        final JButton deleteButton = menuButton("\uD83D\uDDD1");
+        deleteButton.addActionListener(e -> {
+            actionService.removePage();
+            actionService.changePage();
+        });
+
         setBackground(Color.WHITE);
         setLayout(new FlowLayout());
         add(prevButton);
         add(pageNumberTextField);
+        add(totalPageLabel);
         add(nextButton);
         add(deleteButton);
     }
