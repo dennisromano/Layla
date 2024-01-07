@@ -6,13 +6,13 @@ import com.dennisromano.layla.service.ActionServiceImpl;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.dennisromano.layla.util.Style.menuButton;
+import static com.dennisromano.layla.util.Style.customButton;
 
 public class FunctionPanel extends JPanel {
     private final ActionService actionService = ActionServiceImpl.getInstance();
 
     public FunctionPanel() {
-        final JButton deleteBlankButton = menuButton("Elimina pagine vuote");
+        final JButton deleteBlankButton = customButton("Elimina pagine vuote");
         deleteBlankButton.addActionListener(e -> {
             actionService.removeBlankPage();
             actionService.changePage();
