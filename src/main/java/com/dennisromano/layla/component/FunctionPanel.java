@@ -12,12 +12,6 @@ public class FunctionPanel extends JPanel {
     private final ActionService actionService = ActionServiceImpl.getInstance();
 
     public FunctionPanel() {
-        final JButton deleteButton = menuButton("Elimina pagina corrente");
-        deleteButton.addActionListener(e -> {
-            actionService.removePage();
-            actionService.changePage();
-        });
-
         final JButton deleteBlankButton = menuButton("Elimina pagine vuote");
         deleteBlankButton.addActionListener(e -> {
             actionService.removeBlankPage();
@@ -26,7 +20,6 @@ public class FunctionPanel extends JPanel {
 
         setBackground(Color.WHITE);
         setLayout(new GridLayout(12, 1));
-        add(deleteButton);
         add(deleteBlankButton);
     }
 }

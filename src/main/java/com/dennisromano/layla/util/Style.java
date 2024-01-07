@@ -44,12 +44,13 @@ public class Style {
 
     public static JButton menuButton(String text) {
         final Border border = new EmptyBorder(8, 8, 8, 8);
+        final Font font = new Font("Segoe UI Emoji", Font.PLAIN, 14);
 
         final JButton button = new JButton(text);
-        button.setFont(PLAIN_FONT);
+        button.setFont(font);
         button.setBorder(border);
         button.setForeground(new Color(56, 58, 66));
-        button.setBackground(null);
+        button.setBackground(Color.WHITE);
         button.setFocusable(false);
 
         return button;
