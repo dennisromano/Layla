@@ -17,9 +17,8 @@ public class Style {
             final URL resource = Style.class.getClassLoader().getResource("font/DMSans.ttf");
 
             if (resource != null && resource.getPath() != null) {
-                final String fontPath = resource.getPath();
+                final String fontPath = resource.getPath().replace("%20", " ");
                 final File fontFile = new File(fontPath);
-
                 return Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(type, size);
             }
         } catch (FontFormatException | IOException e) {
