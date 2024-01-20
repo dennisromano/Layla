@@ -10,6 +10,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,7 +82,13 @@ public class ActionServiceImpl implements ActionService {
     public JLabel generetePdfPage() {
         try {
             final PDFRenderer pdfRenderer = new PDFRenderer(document);
-            final Image pageImage = pdfRenderer.renderImage(currentPage - 1, 0.75f);
+
+            final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            final int originalHeight = (int) document.getPage(0).getMediaBox().getHeight();
+            final int desiredHeight = screenSize.height - (64 * 3);
+            final float scaleY = (float) desiredHeight / originalHeight;
+
+            final BufferedImage pageImage = pdfRenderer.renderImage(currentPage - 1, scaleY);
             final ImageIcon icon = new ImageIcon(pageImage);
 
             return new JLabel(icon);
@@ -96,10 +103,11 @@ public class ActionServiceImpl implements ActionService {
             if (totalPage > 1 && currentPage >= 1 && currentPage <= totalPage) {
                 document.removePage(currentPage - 1);
 
-                final String autosaveFullPath = DESKTOP_PATH +
-                        AUTOSAVE_PATH +
-                        System.currentTimeMillis() +
-                        ".pdf";
+                final String autosaveFullPath = new StringBuilder(DESKTOP_PATH)
+                        .append(AUTOSAVE_PATH)
+                        .append(System.currentTimeMillis())
+                        .append(".pdf")
+                        .toString();
 
                 createFolderAndFile(autosaveFullPath);
 
@@ -203,18 +211,12 @@ public class ActionServiceImpl implements ActionService {
     }
 
     private String getDesktopPath() {
-        String userHome = System.getProperty("user.home");
+        final String userHome = System.getProperty("user.home");
+        final String os = System.getProperty("os.name").toLowerCase();
 
-        String desktopFolder;
-        String os = System.getProperty("os.name").toLowerCase();
-
-        if (os.contains("win")) {
-            desktopFolder = userHome + "\\Desktop";
-        } else {
-            desktopFolder = userHome + "/Desktop";
-        }
-
-        return desktopFolder;
+        return os.contains("win")
+                ? userHome + "\\Desktop"
+                : userHome + "/Desktop";
     }
 
     @Override

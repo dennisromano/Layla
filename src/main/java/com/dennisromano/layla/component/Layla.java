@@ -26,6 +26,7 @@ public class Layla extends JFrame {
             setSize(700, 900);
             setLocationRelativeTo(null);
             setVisible(true);
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
             add(bodyPanel);
         } catch (Exception e) {
             throw new RuntimeException("Errore in Layla!\n" + e.getMessage());
