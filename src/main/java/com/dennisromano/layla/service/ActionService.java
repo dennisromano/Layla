@@ -22,11 +22,11 @@ public interface ActionService {
 
     int getCurrentPage();
 
-    int goToNextPage();
+    void goToNextPage();
 
-    int goToPreviousPage();
+    void goToPreviousPage();
 
-    int goToSpecificPage(String textFieldValue);
+    void goToSpecificPage(String textFieldValue);
 
     JLabel generetePdfPage();
 

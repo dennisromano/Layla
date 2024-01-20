@@ -18,12 +18,7 @@ public class MenuPanel extends JPanel {
         final JLabel logo = logo();
         final Border border = new EmptyBorder(10, 50, 10, 50);
         final FunctionPanel functionPanel = new FunctionPanel();
-
-        final JButton chooseFileButton = customButton("Scegli PDF...");
-        chooseFileButton.addActionListener(e -> {
-            actionService.openFileChooser();
-            actionService.changePage();
-        });
+        final JButton chooseFileButton = new CustomButton("Scegli PDF...", actionService::openFileChooser);
 
         setBorder(border);
         setBackground(Color.WHITE);

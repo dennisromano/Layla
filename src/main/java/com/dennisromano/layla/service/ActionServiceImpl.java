@@ -216,35 +216,28 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public int goToNextPage() {
+    public void goToNextPage() {
         if (currentPage >= 1 && currentPage < totalPage) {
-            return currentPage++;
+            currentPage++;
         }
-
-        return currentPage;
     }
 
     @Override
-    public int goToSpecificPage(String textFieldValue) {
+    public void goToSpecificPage(String textFieldValue) {
         if (!textFieldValue.isEmpty() && textFieldValue.matches("^\\d+$")) {
             final int textFieldValueAsInt = Integer.parseInt(textFieldValue);
 
             if (textFieldValueAsInt > 0 && textFieldValueAsInt <= totalPage) {
                 currentPage = textFieldValueAsInt;
-                return currentPage;
             }
         }
-
-        return currentPage;
     }
 
     @Override
-    public int goToPreviousPage() {
+    public void goToPreviousPage() {
         if (currentPage > 1 && currentPage <= totalPage) {
-            return currentPage--;
+            currentPage--;
         }
-
-        return currentPage;
     }
 
     @Override

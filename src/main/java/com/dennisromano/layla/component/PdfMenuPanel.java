@@ -12,35 +12,19 @@ public class PdfMenuPanel extends JPanel {
     private final ActionService actionService = ActionServiceImpl.getInstance();
 
     public PdfMenuPanel() {
-        final JButton prevButton = menuButton("◀");
-        prevButton.addActionListener(e -> {
-            actionService.goToPreviousPage();
-            actionService.changePage();
-        });
+        final JButton prevButton = new CustomButton("<", actionService::goToPreviousPage);
+        final JButton nextButton = new CustomButton(">", actionService::goToNextPage);
+        final JButton deleteButton = new CustomButton("x", actionService::removePage);
 
         final JTextField pageNumberTextField = customTextField(actionService.getCurrentPage());
-        pageNumberTextField.addActionListener(e -> {
-            actionService.goToSpecificPage(pageNumberTextField.getText());
-            actionService.changePage();
-        });
+        pageNumberTextField.addActionListener(e -> actionService.goToSpecificPage(pageNumberTextField.getText()));
 
         final JLabel totalPageLabel = new JLabel("/" + actionService.getTotalPage());
         totalPageLabel.setFont(PLAIN_FONT);
 
-        final JButton nextButton = menuButton("▶");
-        nextButton.addActionListener(e -> {
-            actionService.goToNextPage();
-            actionService.changePage();
-        });
-
-        final JButton deleteButton = menuButton("\uD83D\uDDD1");
-        deleteButton.addActionListener(e -> {
-            actionService.removePage();
-            actionService.changePage();
-        });
-
+        setPreferredSize(new Dimension(getWidth(), 64));
         setBackground(Color.WHITE);
-        setLayout(new FlowLayout());
+        setLayout(new FlowLayout(FlowLayout.CENTER, 14, 14));
         add(prevButton);
         add(pageNumberTextField);
         add(totalPageLabel);
