@@ -31,4 +31,6 @@ public interface ActionService {
     JLabel generetePdfPage();
 
     void changePage();
+
+    void convertPDFtoTXT();
 }

@@ -11,9 +11,12 @@ public class FunctionPanel extends JPanel {
 
     public FunctionPanel() {
         final JButton deleteBlankButton = new CustomButton("Elimina pagine vuote", actionService::removeBlankPage);
+        final JButton txtConversionButton = new CustomButton("Converti PDF in TXT", actionService::convertPDFtoTXT);
 
+        setPreferredSize(new Dimension(178, getHeight()));
         setBackground(Color.WHITE);
-        setLayout(new BorderLayout());
-        add(deleteBlankButton, BorderLayout.NORTH);
+        setLayout(new FlowLayout());
+        add(deleteBlankButton);
+        add(txtConversionButton);
     }
 }

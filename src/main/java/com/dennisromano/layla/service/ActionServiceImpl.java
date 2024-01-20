@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ActionServiceImpl implements ActionService {
@@ -42,6 +43,10 @@ public class ActionServiceImpl implements ActionService {
      * Implementation variabiles
      *
      */
+    private static final String TXT_PATH = "/Layla/Conversion/PDFtoTXT_";
+
+    private static final String AUTOSAVE_PATH = "/Layla/Autosave/PDFautosave_";
+
     private int currentPage = 1;
 
     private int totalPage = 1;
@@ -50,7 +55,7 @@ public class ActionServiceImpl implements ActionService {
 
     private PDDocument document;
 
-    private String PDF_PATH = "";
+    private String DESKTOP_PATH = "";
 
 
     private final PdfPanel pdfPanel = new PdfPanel();
@@ -59,8 +64,6 @@ public class ActionServiceImpl implements ActionService {
     public PdfPanel getPdfPanel() {
         return pdfPanel;
     }
-
-
 
 
     /*
@@ -93,17 +96,19 @@ public class ActionServiceImpl implements ActionService {
             if (totalPage > 1 && currentPage >= 1 && currentPage <= totalPage) {
                 document.removePage(currentPage - 1);
 
-                String lastPdfAutoSave = PDF_PATH
-                        .replace(".pdf", "")
-                        .concat(String.valueOf(System.currentTimeMillis()))
-                        .concat(".pdf");
+                final String autosaveFullPath = DESKTOP_PATH +
+                        AUTOSAVE_PATH +
+                        System.currentTimeMillis() +
+                        ".pdf";
 
-                document.save(lastPdfAutoSave);
-                pdfAutoSaveList.add(lastPdfAutoSave);
+                createFolderAndFile(autosaveFullPath);
 
-                document = Loader.loadPDF(new File(lastPdfAutoSave));
+                document.save(autosaveFullPath);
+                pdfAutoSaveList.add(autosaveFullPath);
 
-                if(currentPage > 1) {
+                document = Loader.loadPDF(new File(autosaveFullPath));
+
+                if (currentPage > 1) {
                     currentPage--;
                     totalPage = getTotalPage();
                 }
@@ -129,25 +134,87 @@ public class ActionServiceImpl implements ActionService {
                 }
             }
 
-            for(int i=0; i < blankPages.size(); i++) {
+            for (int i = 0; i < blankPages.size(); i++) {
                 int value = blankPages.get(i) - i - 1;
                 document.removePage(value);
             }
 
-            String lastPdfAutoSave = PDF_PATH
-                    .replace(".pdf", "")
-                    .concat(String.valueOf(System.currentTimeMillis()))
-                    .concat(".pdf");
+            final String autosaveFullPath = new StringBuilder(DESKTOP_PATH)
+                    .append(AUTOSAVE_PATH)
+                    .append(System.currentTimeMillis())
+                    .append(".pdf")
+                    .toString();
 
-            document.save(lastPdfAutoSave);
-            pdfAutoSaveList.add(lastPdfAutoSave);
+            createFolderAndFile(autosaveFullPath);
 
-            document = Loader.loadPDF(new File(lastPdfAutoSave));
+            document.save(autosaveFullPath);
+            pdfAutoSaveList.add(autosaveFullPath);
+
+            document = Loader.loadPDF(new File(autosaveFullPath));
             totalPage = getTotalPage();
             currentPage = 1;
         } catch (Exception e) {
             throw new RuntimeException("Errore nel salvataggio del nuovo file, dopo eliminazione delle pagine bianche!\n" + e.getMessage());
         }
+    }
+
+    @Override
+    public void convertPDFtoTXT() {
+        final List<String> textLines = new ArrayList<>();
+        final PDFTextStripper pdfTextStripper = new PDFTextStripper();
+
+        try {
+            final String text = pdfTextStripper.getText(document);
+            final String[] lines = text.split(System.lineSeparator());
+
+            Collections.addAll(textLines, lines);
+
+            writeTXTfile(textLines);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void writeTXTfile(List<String> lines) throws IOException {
+        final String txtFullPath = new StringBuilder(DESKTOP_PATH)
+                .append(TXT_PATH)
+                .append(System.currentTimeMillis())
+                .append(".txt")
+                .toString();
+
+        createFolderAndFile(txtFullPath);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(txtFullPath))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    }
+
+    private static void createFolderAndFile(String newPath) {
+        try {
+            final Path path = Paths.get(newPath);
+            Files.createDirectories(path.getParent());
+            Files.createFile(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getDesktopPath() {
+        String userHome = System.getProperty("user.home");
+
+        String desktopFolder;
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.contains("win")) {
+            desktopFolder = userHome + "\\Desktop";
+        } else {
+            desktopFolder = userHome + "/Desktop";
+        }
+
+        return desktopFolder;
     }
 
     @Override
@@ -187,10 +254,11 @@ public class ActionServiceImpl implements ActionService {
     }
 
     private JLabel startOperation(String filePath) throws IOException {
-        PDF_PATH = filePath;
-        document = loadDocument(PDF_PATH);
+        document = loadDocument(filePath);
         totalPage = getTotalPage();
-        pdfAutoSaveList.add(PDF_PATH);
+        pdfAutoSaveList.add(filePath);
+        DESKTOP_PATH = getDesktopPath();
+
         return generetePdfPage();
     }
 
